@@ -17,9 +17,9 @@ namespace CalendarQuickstart
 	{
 		// If modifying these scopes, delete your previously saved credentials
 		// at ~/.credentials/calendar-dotnet-quickstart.json
-		static string[] Scopes = { CalendarService.Scope.CalendarReadonly };
+		static string[] Scopes = { CalendarService.Scope.Calendar, CalendarService.Scope.CalendarEvents};
 		static string ApplicationName = "Google Calendar API .NET Quickstart";
-
+		
 		static void Main(string[] args)
 		{
 			UserCredential credential;
@@ -73,8 +73,43 @@ namespace CalendarQuickstart
 			{
 				Console.WriteLine("No upcoming events found.");
 			}
-			Console.Read();
+			
+			Event newEvent = new Event()
+			{
+				Summary = "EbayFlexWorkTime",
+				Location = "GFC",
+				Description = "",
+				Start = new EventDateTime()
+				{
+					DateTime = DateTime.Parse("2019-02-13T09:00:00"),
+					TimeZone = "Asia/Seoul",
+				},
+				End = new EventDateTime()
+				{
+					DateTime = DateTime.Parse("2019-02-13T16:00:00"),
+					TimeZone = "Asia/Seoul",
+				},
+				//Recurrence = new String[] { "RRULE:FREQ=DAILY;COUNT=2" },
+				//Attendees = new EventAttendee[] {
+				//	new EventAttendee() { Email = "lpage@example.com" },
+				//	new EventAttendee() { Email = "sbrin@example.com" },
+				//},
+				//Reminders = new Event.RemindersData()
+				//{
+				//	UseDefault = false,
+				//	Overrides = new EventReminder[] {
+				//		new EventReminder() { Method = "email", Minutes = 24 * 60 },
+				//		new EventReminder() { Method = "sms", Minutes = 10 },
+				//	}
+				//}
+			};
 
+			String calendarId = "primary";
+			EventsResource.InsertRequest insertRequest = service.Events.Insert(newEvent, calendarId);
+			Event createdEvent = insertRequest.Execute();
+			Console.WriteLine("Event created: {0}", createdEvent.HtmlLink);
+
+			Console.Read();
 		}
 	}
 }
